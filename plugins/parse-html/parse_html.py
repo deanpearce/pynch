@@ -11,11 +11,13 @@ class HtmlParser:
         meta_tags = HtmlParser._extract_meta_tags(soup)
         title = HtmlParser._extract_title(soup)
         text = HtmlParser._extract_text(soup)
+        links = HtmlParser._extract_links(soup)
 
         return {
             'meta_tags': meta_tags,
             'title': title,
-            'text': text
+            'text': text,
+            'links': links,
         }
 
     @staticmethod
@@ -41,6 +43,11 @@ class HtmlParser:
 
         return ' '.join(soup.stripped_strings)
 
+    @staticmethod
+    def _extract_links(soup: BeautifulSoup) -> List[str]:
+        links = [a["href"] for a in soup.find_all("a", href=True)]
+        return links
+
 
 if __name__ == "__main__":
     html = """
@@ -57,6 +64,11 @@ if __name__ == "__main__":
             <script>
                 console.log("This is a script");
             </script>
+            <ul>
+                <li><a href="https://www.example1.com">Example 1</a></li>
+                <li><a href="https://www.example2.com">Example 2</a></li>
+                <li><a href="https://www.example3.com">Example 3</a></li>
+            </ul>
         </body>
     </html>
     """
@@ -67,3 +79,4 @@ if __name__ == "__main__":
     print("Meta Tags:", result['meta_tags'])
     print("Title:", result['title'])
     print("Text:", result['text'])
+    print("Links:", result['links'])
