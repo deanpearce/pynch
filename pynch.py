@@ -1,5 +1,5 @@
-from common.injector import Injector
-from common.generator import Generator
+from core.injector import Injector
+from core.generator import Generator
 
 # Load Plugins
 from plugins.fetch_http.fetch_http import FetchHttp

@@ -1,7 +1,7 @@
 from typing import List
 
-from .crawldb.crawldb import CrawlDB
-from .crawldb.status_enums import DbStatus
+from ..crawldb.crawldb import CrawlDB
+from ..crawldb.status_enums import DbStatus
 
 class Injector:
 
