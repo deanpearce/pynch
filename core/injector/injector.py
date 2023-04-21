@@ -1,24 +1,32 @@
+import importlib
 from typing import List
 
+from .injector_interface import InjectorInterface
 from ..crawldb.crawldb import CrawlDB
 from ..crawldb.status_enums import DbStatus
 
 class Injector:
 
-    def __init__(self, db_path: str):
+    def __init__(self, config: object, db_path: str):
+        self.config = config
         self.crawl_db = CrawlDB(db_path)
 
-    @staticmethod
-    def load_urls(file_path: str) -> List[str]:
-        urls = []
-        with open(file_path, "r") as f:
-            for line in f:
-                url = line.strip()
-                if url:
-                    urls.append(url)
-        return urls
+    def init(self):
+        plugin_name = self.config['chain'][0]
+        injector = self.load_injector(plugin_name).entrypoint(self.config)
+        return injector
 
-    def insert_urls(self, urls: List[str]):
+    def load_injector(self, plugin_name: str) -> InjectorInterface:
+        module_name = f"plugins.inject_{plugin_name}"
+        print(module_name)
+        try:
+            module = importlib.import_module(module_name)
+            return module
+        except ModuleNotFoundError:
+            print(f"Error: Module {module_name} not found")
+            return None
+
+    def inject(self, urls: List[str]):
         for url in urls:
             web_page = {
                 'id': url,

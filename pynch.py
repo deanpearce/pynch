@@ -1,22 +1,18 @@
+from core.config import ConfigLoader
 from core.injector import Injector
 from core.generator import Generator
+from core.fetcher import Fetcher
 
-# Load Plugins
-from plugins.fetch_http.fetch_http import FetchHttp
 
-db_path = "nutch_crawl_db.sqlite"  # Replace with the path to your crawl database
+config = ConfigLoader("config/common.yaml")
 
-# Instantiate Plugins
-
-# TODO Move to config file
-user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
-fetcher = FetchHttp(user_agent)
+db_path = config.get_global()['crawl_db']['path']
+print(db_path)
 
 def inject(db_path):
-  injector = Injector(db_path)
-  urls_file = "test_data/urls.txt"  # Replace with the path to your text file containing URLs
-  urls = Injector.load_urls(urls_file)
-  injector.insert_urls(urls)
+  injector = Injector(config.get_stage('inject'), db_path)
+  urls = injector.init().load_urls()
+  injector.inject(urls)
 
   del injector
 
@@ -24,7 +20,12 @@ def generate(db_path):
   generator = Generator(db_path)
   for record in generator:
     print(record['url'])
-    print(fetcher.fetch(record['url']))
+    fetch(record['url'])
+
+def fetch(url):
+  fetcher = Fetcher(config.get_stage('fetch'), db_path)
+  contents = fetcher.init().fetch(url)
+  print(contents)
 
 inject(db_path)
 generate(db_path)

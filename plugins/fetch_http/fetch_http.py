@@ -4,10 +4,12 @@ from urllib3.util.retry import Retry
 
 
 class FetchHttp:
-    def __init__(self, user_agent, timeout=5, max_retries=3):
-        self.user_agent = user_agent
-        self.timeout = timeout
-        self.session = self._create_session(max_retries)
+
+    def __init__(self, config):
+        self.user_agent = config['plugins']['http']['user_agent']
+        self.timeout = config['plugins']['http']['timeout']
+        self.max_retries = config['plugins']['http']['max_retries']
+        self.session = self._create_session(self.max_retries)
 
     def _create_session(self, max_retries):
         session = requests.Session()

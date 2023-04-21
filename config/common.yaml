@@ -1,0 +1,24 @@
+global:
+  tmp_dir: /tmp
+  crawl_db:
+    path: "crawldb/pynch_crawl_db.sqlite"
+
+stages:
+  inject:
+    chain: ["file"] # All Injector plugins to run
+    plugins:
+      file:
+        seeds:
+          - "test_data/urls.txt"
+  generate:
+    max_count: 10
+  fetch:
+    chain: ["http"] # All Fetcher plugins to run
+    plugins:
+      http:
+        timeout: 10
+        max_retries: 3
+        user_agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
+  parse:
+  index:
+  update:

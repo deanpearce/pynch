@@ -1,8 +1,9 @@
 from core.injector.injector_interface import InjectorInterface
 
 class FileInjector(InjectorInterface):
-    def __init__(self, file_path: str):
-        self.file_path = file_path
+
+    def __init__(self, config):
+        self.file_path = config['plugins']['file']['seeds'][0]
 
     def load_urls(self) -> str:
         urls = []
