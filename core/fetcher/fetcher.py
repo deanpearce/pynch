@@ -6,9 +6,9 @@ from ..crawldb import CrawlDB, DbStatus
 
 class Fetcher:
 
-    def __init__(self, config: object, db_path: str):
+    def __init__(self, config: object, crawl_db: CrawlDB):
         self.config = config
-        self.crawl_db = CrawlDB(db_path)
+        self.crawl_db = crawl_db
 
     def init(self):
         plugin_name = self.config['chain'][0]

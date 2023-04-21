@@ -1,7 +1,8 @@
 global:
   tmp_dir: /tmp
-  crawl_db:
-    path: "crawldb/pynch_crawl_db.sqlite"
+  crawldb:
+    db_path: "crawldb/pynch_crawl_db.sqlite"
+    segment_path: "crawldb/segments"
 
 stages:
   inject:

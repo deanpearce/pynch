@@ -1,36 +1,45 @@
 import logging
 import core.logger
 
+from core.crawldb import CrawlDB
+
 from core.config import ConfigLoader
 from core.injector import Injector
 from core.generator import Generator
 from core.fetcher import Fetcher
 
 # logging
-core.logger.configure_logging('logs/pynch.log')
+core.logger.configure_logging("logs/pynch.log")
 
 # load config
 config = ConfigLoader("config/common.yaml")
 
-# config items
-db_path = config.get_global()['crawl_db']['path']
+crawl_db = CrawlDB(config.get_global())
 
-def inject(db_path):
-  injector = Injector(config.get_stage('inject'), db_path)
+def inject():
+  logging.debug("Injecting URLs into crawl database")
+  injector = Injector(config.get_stage('inject'), crawl_db)
   urls = injector.init().load_urls()
   injector.inject(urls)
 
   del injector
 
-def generate(db_path):
-  generator = Generator(db_path)
+def generate():
+  logging.debug("Generating URLs from crawl database")
+  generator = Generator(crawl_db)
   return generator
 
 
-def fetch(url):
-    fetcher = Fetcher(config.get_stage('fetch'), db_path)
-    contents = fetcher.init().fetch(url)
-    print(contents)
+def fetch(generator):
+    logging.debug("Fetching URLs from crawl database")
+    fetcher = Fetcher(config.get_stage('fetch'), crawl_db)
+    fetch_method = fetcher.init()
+
+    for record in generator:
+        url = record['url']
+        logging.debug(f"Fetching {url}")
+        contents = fetch_method.fetch(url)
+        print(contents)
 
 def parse():
     pass
@@ -45,17 +54,18 @@ def main():
 
     logging.info("Starting Pynch")
 
-    inject(db_path)
-    generator = generate(db_path)
+    inject()
 
-    for record in generator:
-        fetch(record['url'])
+    generator = generate()
+
+    fetch(generator)
 
     parse()
 
     index()
 
     update()
+
 
 if __name__ == "__main__":
     main()
