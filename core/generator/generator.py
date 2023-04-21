@@ -1,4 +1,4 @@
-from .crawldb.crawldb import CrawlDB
+from ..crawldb import CrawlDB
 
 class Generator:
     def __init__(self, crawl_db_path):

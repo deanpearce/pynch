@@ -2,8 +2,7 @@ import importlib
 from typing import List
 
 from .injector_interface import InjectorInterface
-from ..crawldb.crawldb import CrawlDB
-from ..crawldb.status_enums import DbStatus
+from ..crawldb import CrawlDB, DbStatus
 
 class Injector:
 

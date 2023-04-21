@@ -1,13 +1,13 @@
 from core.config import ConfigLoader
 from core.injector import Injector
-from core.generator import Generator
+from core.generator.generator import Generator
 from core.fetcher import Fetcher
 
-
+# load config
 config = ConfigLoader("config/common.yaml")
 
+# config items
 db_path = config.get_global()['crawl_db']['path']
-print(db_path)
 
 def inject(db_path):
   injector = Injector(config.get_stage('inject'), db_path)
