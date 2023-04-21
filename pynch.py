@@ -1,6 +1,6 @@
 from core.config import ConfigLoader
 from core.injector import Injector
-from core.generator.generator import Generator
+from core.generator import Generator
 from core.fetcher import Fetcher
 
 # load config
@@ -18,14 +18,35 @@ def inject(db_path):
 
 def generate(db_path):
   generator = Generator(db_path)
-  for record in generator:
-    print(record['url'])
-    fetch(record['url'])
+  return generator
+
 
 def fetch(url):
-  fetcher = Fetcher(config.get_stage('fetch'), db_path)
-  contents = fetcher.init().fetch(url)
-  print(contents)
+    fetcher = Fetcher(config.get_stage('fetch'), db_path)
+    contents = fetcher.init().fetch(url)
+    print(contents)
 
-inject(db_path)
-generate(db_path)
+def parse():
+    pass
+
+def index():
+    pass
+
+def update():
+    pass
+
+def main():
+    inject(db_path)
+    generator = generate(db_path)
+
+    for record in generator:
+        fetch(record['url'])
+
+    parse()
+
+    index()
+
+    update()
+
+if __name__ == "__main__":
+    main()

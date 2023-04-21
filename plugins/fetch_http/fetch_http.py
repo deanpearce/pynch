@@ -26,6 +26,7 @@ class FetchHttp:
         return session
 
     def fetch(self, url):
+        print(f"Fetching {url}...")
         headers = {'User-Agent': self.user_agent}
         try:
             response = self.session.get(url, headers=headers, timeout=self.timeout)
