@@ -1,7 +1,13 @@
+import logging
+import core.logger
+
 from core.config import ConfigLoader
 from core.injector import Injector
 from core.generator import Generator
 from core.fetcher import Fetcher
+
+# logging
+core.logger.configure_logging('logs/pynch.log')
 
 # load config
 config = ConfigLoader("config/common.yaml")
@@ -36,6 +42,9 @@ def update():
     pass
 
 def main():
+
+    logging.info("Starting Pynch")
+
     inject(db_path)
     generator = generate(db_path)
 
