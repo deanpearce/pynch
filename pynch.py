@@ -7,6 +7,7 @@ from core.config import ConfigLoader
 from core.injector import Injector
 from core.generator import Generator
 from core.fetcher import Fetcher
+from core.parser import Parser
 
 # logging
 core.logger.configure_logging("logs/pynch.log")
@@ -38,11 +39,15 @@ def fetch(generator):
     for record in generator:
         url = record['url']
         logging.debug(f"Fetching {url}")
-        contents = fetch_method.fetch(url)
-        print(contents)
+        record = fetch_method.fetch(url)
+        parse(record)
+        # print(record.content)
 
-def parse():
-    pass
+def parse(doc):
+    logging.debug("Parsing URLs from crawl database")
+    parser = Parser(config.get_stage('parse'), crawl_db)
+    parser_method = parser.init()
+    parser_method.parse(doc)
 
 def index():
     pass
@@ -60,7 +65,7 @@ def main():
 
     fetch(generator)
 
-    parse()
+    # parse()
 
     index()
 

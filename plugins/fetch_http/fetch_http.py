@@ -2,6 +2,7 @@ import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
+from core.crawldb import DbRecord
 
 class FetchHttp:
 
@@ -25,13 +26,16 @@ class FetchHttp:
         session.mount("https://", adapter)
         return session
 
-    def fetch(self, url):
+    def fetch(self, url) -> DbRecord:
         print(f"Fetching {url}...")
         headers = {'User-Agent': self.user_agent}
         try:
             response = self.session.get(url, headers=headers, timeout=self.timeout)
             response.raise_for_status()
-            return response.content
+
+            record = DbRecord(id=url, url=url, content=response.content, content_type=response.headers['Content-Type'],)
+
+            return record
         except requests.RequestException as e:
             print(f"Request error: {e}")
             return None
