@@ -3,8 +3,9 @@ from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
 from core.crawldb import DbRecord
+from core.fetcher import FetcherInterface
 
-class FetchHttp:
+class FetchHttp(FetcherInterface):
 
     def __init__(self, config):
         self.user_agent = config['plugins']['http']['user_agent']

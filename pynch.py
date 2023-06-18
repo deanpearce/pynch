@@ -1,7 +1,8 @@
 import logging
+from typing import List
 import core.logger
 
-from core.crawldb import CrawlDB
+from core.crawldb import CrawlDB, DbRecord
 
 from core.config import ConfigLoader
 from core.injector import Injector
@@ -36,20 +37,25 @@ def fetch(generator):
     fetcher = Fetcher(config.get_stage('fetch'), crawl_db)
     fetch_method = fetcher.init()
 
+    records = []
+
     for record in generator:
         url = record['url']
         logging.debug(f"Fetching {url}")
         record = fetch_method.fetch(url)
-        parse(record)
         # print(record.content)
+        records.append(record)
 
-def parse(doc):
+    parse(records)
+
+
+def parse(docs: List[DbRecord]):
     logging.debug("Parsing URLs from crawl database")
     parser = Parser(config.get_stage('parse'), crawl_db)
     parser_method = parser.init()
-    parser_method.parse(doc)
+    parser_method.parse(docs)
 
-def index():
+def index(docs: List[DbRecord]):
     pass
 
 def update():

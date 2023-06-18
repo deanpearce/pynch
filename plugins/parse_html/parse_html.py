@@ -2,28 +2,38 @@ from bs4 import BeautifulSoup, Tag
 from typing import List, Dict, Any
 
 from core.crawldb import DbRecord
+from core.parser import ParserInterface
 
-class HtmlParser:
+class HtmlParser(ParserInterface):
 
     def __init__(self, config):
         pass
 
-    def parse(self, doc: DbRecord) -> Dict[str, Any]:
-        soup = BeautifulSoup(doc.content, 'html.parser')
+    def parse(self, doc: List[DbRecord]) -> List[Dict[str, Any]]:
 
-        meta_tags = HtmlParser._extract_meta_tags(soup)
-        title = HtmlParser._extract_title(soup)
-        text = HtmlParser._extract_text(soup)
-        links = HtmlParser._extract_links(soup)
+        parsed_docs = []
 
-        print(meta_tags)
+        for record in doc:
+            if record['content_type'] != 'text/html':
+                continue
 
-        return {
-            'meta_tags': meta_tags,
-            'title': title,
-            'text': text,
-            'links': links,
-        }
+            soup = BeautifulSoup(doc.content, 'html.parser')
+
+            meta_tags = HtmlParser._extract_meta_tags(soup)
+            title = HtmlParser._extract_title(soup)
+            text = HtmlParser._extract_text(soup)
+            links = HtmlParser._extract_links(soup)
+
+            print(meta_tags)
+
+            parsed_docs.append({
+                'meta_tags': meta_tags,
+                'title': title,
+                'text': text,
+                'links': links,
+            })
+
+        return parsed_docs
 
     @staticmethod
     def _extract_meta_tags(soup: BeautifulSoup) -> List[Dict[str, str]]:
